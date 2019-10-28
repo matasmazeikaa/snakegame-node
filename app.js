@@ -1,27 +1,30 @@
 const blessed = require('blessed')
-
-const GAME_SPEED = 50
 const DIRECTIONS = {
   up: { x: 0, y: -1 },
   down: { x: 0, y: 1 },
   right: { x: 1, y: 0 },
   left: { x: -1, y: 0 },
 }
-const INITIAL_SNAKE_SIZE = 4
-const SNAKE_COLOR = 'green'
-const DOT_COLOR = 'red'
 
 createGameScreen = () => {
     return {
         parent: screen,
-        top: 1,
+        top: 0,
         left: 0,
         width: '100%',
         height: '100%-1',
         style: {
           fg: 'black',
           bg: 'black',
-        }
+          focus: {
+            bg: 'black'
+          },
+          underline: false,
+          blink: false,
+          inverse: false,
+          invisible: false,
+          transparent: false,
+        },
     }
 }
 
@@ -60,18 +63,53 @@ draw = (coord, color) => {
         left: coord.x,
         width: 1,
         height: 1,
+        cursor: {
+
+        },
         style: {
           fg: color,
           bg: color,
+          underline: false,
+          blink: false,
+          inverse: false,
+          invisible: false,
+          transparent: false,
         },
       })
 }
 
-var food = {x: 50, y: 0}
+var startGameScreen = blessed.box({
+  top: 'center',
+  left: 'center',
+  width: '50%',
+  height: '50%',
+  content: '1. Start game \n2. Exit game',
+  tags: true,
+  cursor: {
+    blink: false
+  },
+  border: {
+    type: 'line'
+  },
+  style: {
+    fg: 'white',
+    bg: 'magenta',
+    border: {
+      fg: '#f0f0f0'
+    },
+    hover: {
+      bg: 'green'
+    }
+  }
+})
+
+screen.append(startGameScreen)
+
+var food = {x: 0, y: 0}
 var direction = 'right'
 var snake = []
-for (let i = INITIAL_SNAKE_SIZE; i >= 0; i--) {
-    snake[INITIAL_SNAKE_SIZE - i] = { x: i, y: 0 }
+for (let i = 4; i >= 0; i--) {
+    snake[4 - i] = { x: i, y: 0 }
 }
 
 generateFoodCordinates = (min, max) => {
@@ -79,18 +117,12 @@ generateFoodCordinates = (min, max) => {
 }
 
 generateFood = () => {
-    food.x = generateFoodCordinates(0, gameContainer.width - 1)
-    food.y = generateFoodCordinates(1, gameContainer.height - 1) 
-
-    snake.forEach(cord => {
-        if (cord.x === food.x && cord.y === food.y) {
-            generateFood();
-        }
-    })
+    food.x = generateFoodCordinates(10, gameContainer.width)
+    food.y = generateFoodCordinates(10, gameContainer.height) 
 }
 
 drawFood = () => {
-    draw(food, DOT_COLOR)
+    draw(food, 'red')
 }
 
 
@@ -99,6 +131,7 @@ moveSnake = () => {
         x: snake[0].x + DIRECTIONS[direction].x,
         y: snake[0].y + DIRECTIONS[direction].y
     }
+
     snake.unshift(head)
     if (snake[0].x === food.x && snake[0].y === food.y) {
         generateFood()
@@ -109,7 +142,7 @@ moveSnake = () => {
 
 drawSnake = () => {
     snake.forEach((cord) => {
-        draw(cord, SNAKE_COLOR);
+        draw(cord, 'green');
     })
 }
 
@@ -125,8 +158,18 @@ tick = () => {
 }
 
 start = () => {
-    setInterval(() => tick(), GAME_SPEED)
+    setInterval(() => tick(), 50)
 }
-generateFood();
-start();
 
+startGameScreen.key('1', (ch, key) => {
+    gameContainer.focus()
+    generateFood();
+    start();
+})
+
+startGameScreen.key('2', (ch, key) => {
+  return process.exit(0);
+})
+
+startGameScreen.focus();
+screen.render();
