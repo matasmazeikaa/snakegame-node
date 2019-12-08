@@ -18,12 +18,7 @@ createGameScreen = () => {
           bg: 'black',
           focus: {
             bg: 'black'
-          },
-          underline: false,
-          blink: false,
-          inverse: false,
-          invisible: false,
-          transparent: false,
+          }
         },
     }
 }
@@ -103,11 +98,38 @@ var startGameScreen = blessed.box({
   }
 })
 
+var gameOverScreen = blessed.box({
+  top: 'center',
+  left: 'center',
+  width: '50%',
+  height: '50%',
+  content: 'YOU LOSE :(',
+  tags: true,
+  cursor: {
+    blink: false
+  },
+  border: {
+    type: 'line'
+  },
+  style: {
+    fg: 'white',
+    bg: 'magenta',
+    border: {
+      fg: '#f0f0f0'
+    },
+    hover: {
+      bg: 'green'
+    }
+  }
+})
+
 screen.append(startGameScreen)
 
 var food = {x: 0, y: 0}
 var direction = 'right'
 var snake = []
+var speed = 50
+var startGame;
 for (let i = 4; i >= 0; i--) {
     snake[4 - i] = { x: i, y: 0 }
 }
@@ -134,7 +156,9 @@ moveSnake = () => {
 
     snake.unshift(head)
     if (snake[0].x === food.x && snake[0].y === food.y) {
-        generateFood()
+        speed -= 5;
+        clearInterval(startGame);
+        start();
       } else {
         snake.pop()
       }
@@ -148,7 +172,9 @@ drawSnake = () => {
 
 tick = () => {
     if (snake[0].x >= gameContainer.width || snake[0].x <= -1 || snake[0].y >= gameContainer.height || snake[0].y <= -1) {
-      return process.exit(0);
+      clearScreen();
+      screen.append(startGameScreen);
+      screen.render();
     }
     clearScreen();
     drawFood();
@@ -158,7 +184,7 @@ tick = () => {
 }
 
 start = () => {
-    setInterval(() => tick(), 50)
+   startGame = setInterval(() => tick(), speed)
 }
 
 startGameScreen.key('1', (ch, key) => {
