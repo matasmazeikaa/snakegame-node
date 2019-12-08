@@ -1,0 +1,27 @@
+{
+  "name": "snakegame",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Game.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "blessed": "^0.1.81",
+    "jest": "^24.9.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MatasMazeika/snakegame-node.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MatasMazeika/snakegame-node/issues"
+  },
+  "homepage": "https://github.com/MatasMazeika/snakegame-node#readme"
+}
